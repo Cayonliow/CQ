@@ -35,12 +35,14 @@
 
             event.preventDefault();
             $.ajax({
-                type: "post",
+                type: "get",
                 url: "RequestToCQ",
                 datatype: "JSON",
                 data: data,
-                success: function(res){
+                success: function(req,res){
+                    console.log('wr');
                     console.log(res);
+                    window.location="/game";
                 }
             })
         });

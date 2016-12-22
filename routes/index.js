@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
 });
 
 
-router.get('/RequestToCQ',function(req,res1){
+router.get('/RequestToCQ',function(req,res){
     
     //var parameter=querystring.parse(body);
     
@@ -26,25 +26,54 @@ router.get('/RequestToCQ',function(req,res1){
     //var password=sha(parameter.password);
    // var key=EvoeybENCmC0rwqa9Rjs;
 
-  console.log('dfdfdfdfdf');
+//  console.log(name);
 
     const exec=require('child_process').exec;
     exec(`curl "http://merry.ee.ncku.edu.tw:8888/playerInfo?key=EvoeybENCmC0rwqa9Rjs&account=test&password=${sha256('pass')}"`, function (error,stdout,stderr){
       if(error){
-      
-      console.log('wwwwwwwwwww');
-      return console.error(`exec error: ${error}`);
-      
-      
+        return console.error(`exec error: ${error}`);    
       }
 
       //var data = JSON
       //if(stdout.err)
       //else
-      //:wq
-    //console.log(JSON.parse(stdout.err))
-    console.log(stdout);
-    })
+    
+      //console.log(JSON.parse(stdout.err));
+      console.log(stdout);
+    
+      if(stdout=='{"err":"no player meets"}'){
+        console.log('routes said NotAPlayer');
+        res.send({
+            msg: "NotAPlayer"
+        });
+      }
+      else{
+        console.log('routes said :Player');
+        
+//        res.sendFile(path.join(__dirname,'../views','game.html'));
+//          res.redirect('../game');
+    res.sendFile(path.join(__dirname,'../views','game.html'));
+    /*res.send({
+            msg: "Player"
+        });*/
+      }
+      //return res1;
+   
+   });
+
+
 });
+
+router.get('/ToGame',function(res2){
+
+
+
+});
+
+
+
+
+//res1.sendFile(path.join(__dirname,'../views','game.html'));
+
 
 module.exports = router;
