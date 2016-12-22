@@ -1,0 +1,49 @@
+
+<html>
+
+<head>
+    <title>CQ</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+
+    <form>
+        Please Type the information below:
+        <br>
+        <input type='text' id='name' placeholder="name">
+        <br>
+        <input type='text' id='password' placeholder="password">
+        
+        <br>
+        <button id="btn">Click me</button>
+    </form>
+
+
+
+
+
+
+    <script>
+        $("#btn").click(function(event) {
+
+            var data = {
+                name: $("#name").val(),
+                password: $("#password").val(),
+            }
+
+            event.preventDefault();
+            $.ajax({
+                type: "post",
+                url: "RequestToCQ",
+                datatype: "JSON",
+                data: data,
+                success: function(res){
+                    console.log(res);
+                }
+            })
+        });
+    </script>
+
+</body>

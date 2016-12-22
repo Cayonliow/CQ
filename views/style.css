@@ -1,0 +1,111 @@
+body{
+	color: red;
+	
+}
+
+#map{
+    left: 0px;
+    top: 0px;
+	position : absolute;	
+
+}
+
+
+#frame{  
+   width: 1320px;
+   height: 660px;
+   background-color: black ;
+   left: 30px;
+   top:15px;
+   position : absolute;
+}
+
+#inventory{ 
+	width: 580px;
+	height: 540px;
+	left: 450px;
+	top: 75px;
+	background-color: gray;	
+	position : absolute;
+	visibility: hidden;
+	z-Index: 2;
+}
+
+#status{
+	width: 180px;
+	height: 540px;
+	left: 1170px;
+	top: 15px;
+	background-color: yellow;	
+	position : absolute;
+	visibility: hidden;
+	z-Index: 2;
+}
+
+
+#craft{
+	width: 180px;
+	height: 180px;
+	left: 90px;
+	top: 40px;
+	background-color: #E3E3E3;	
+	position : absolute;
+}
+
+#new{
+	width: 120px;
+	height: 120px;
+	left: 370px;
+	top: 70px;
+	background-color: #E3E3E3;	
+	position : absolute;
+}
+
+#item{
+	width: 540px;
+	height: 180px;
+	left: 20px;
+	top: 260px;
+	background-color: #E3E3E3;	
+	position : absolute;
+	overflow : ;
+}
+
+#carry{
+	width: 420px;
+	height: 180px;
+	left: 20px;
+	top: 460px;
+	background-color: #E3E3E3;	
+	position : absolute;
+}
+
+#comfirm{
+	width: 60px;
+	height: 60px;
+	left: 440px;
+	top: 460px;
+	position : absolute;
+}
+
+#cancel{
+	width: 60px;
+	height: 60px;
+	left: 460px;
+	top: 460px;
+	position : absolute;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
