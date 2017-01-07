@@ -17,4 +17,15 @@ router.get('/', function(req, res) {
 
     });
 
+
+router.get('/',function(req, res) {
+    connection.query('select * from `land`', function(error,land) {
+        if(error) {
+            throw error;
+         }
+    });
+    res.send ({
+      table: land });
+});
+
 module.exports = router;

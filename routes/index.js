@@ -1,44 +1,34 @@
-var express = require('express');
-var router = express.Router();
-var router=express.Router();
-var supeagent=require('superagent');
-var sha256= require('sha256')
-var querystring = require('querystring');
-var request=require('request');
-var path=require("path");
+const exec = require('child_process').exec;
+const express = require('express');
+const path = require("path");
+const querystring = require('querystring');
+const request = require('request');
+const router = express.Router();
+const sha256 = require('sha256')
+const supeagent = require('superagent');
 
 var date=new Date();
+const key = 'EvoeybENCmC0rwqa9Rjs';
 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-//  res.render('index', { title: 'Express' });
+ // res.render('views/index', { title: 'Express' });
     res.sendFile(path.join(__dirname,'../views','index.html'));
 
 });
 
 
-router.get('/RequestToCQ',function(req,res){
-    
-    //var parameter=querystring.parse(body);
-    
-    //var name=parameter.name;
-    //var password=sha(parameter.password);
-   // var key=EvoeybENCmC0rwqa9Rjs;
+router.get('/RequestToCQ',function(req, res){
+    const parameter = querystring.parse(req._parsedUrl.query);
+    const name = parameter.name;
+    const password = sha256(parameter.password);
 
-//  console.log(name);
-
-    const exec=require('child_process').exec;
-    exec(`curl "http://merry.ee.ncku.edu.tw:8888/playerInfo?key=EvoeybENCmC0rwqa9Rjs&account=test&password=${sha256('pass')}"`, function (error,stdout,stderr){
+    exec(`curl "http://merry.ee.ncku.edu.tw:8888/playerInfo?key=${key}&account=${name}&password=${password}"`, function (error,stdout,stderr){
       if(error){
         return console.error(`exec error: ${error}`);    
       }
 
-      //var data = JSON
-      //if(stdout.err)
-      //else
-    
-      //console.log(JSON.parse(stdout.err));
       console.log(stdout);
     
       if(stdout=='{"err":"no player meets"}'){
@@ -49,16 +39,12 @@ router.get('/RequestToCQ',function(req,res){
       }
       else{
         console.log('routes said :Player');
-        
-//        res.sendFile(path.join(__dirname,'../views','game.html'));
-//          res.redirect('../game');
-    res.sendFile(path.join(__dirname,'../views','game.html'));
-    /*res.send({
-            msg: "Player"
-        });*/
+        res.send({
+            msg: "ok"
+        });
+  
+        //res.sendFile(path.join(__dirname,'../views','game.html'));
       }
-      //return res1;
-   
    });
 
 

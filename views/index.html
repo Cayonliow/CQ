@@ -1,51 +1,127 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>CQ+ </title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<html>
+	<link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,600,400italic,700' rel='stylesheet' type='text/css'>
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="javascripts/css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="javascripts/css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="javascripts/css/bootstrap.css">
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="javascripts/css/style.css">
 
-<head>
-    <title>CQ</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-</head>
+	<!-- Modernizr JS -->
+	<script src="javascripts/js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="javascripts/js/respond.min.js"></script>
+	<![endif]-->
 
-<body>
+	</head>
+	<body>
+		
+	<div class="fh5co-loader"></div>
+	
+	<div id="page">
+	<nav class="fh5co-nav" role="navigation">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<div id="fh5co-logo"><a href="index.html">RELOAD<strong>.</strong></a></div>
+				</div>
+			</div>
+		</div>
+	</nav>
 
+	<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url(javascripts/images/BG.png);" data-stellar-background-ratio="0.5">
+		<div class="overlay"></div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2 text-center">
+					<div class="display-t">
+						<div class="display-tc animate-box" data-animate-effect="fadeIn">
+							<h1>CQ+</h1>
+							<h2>Enjoy the game with your own original Class Quest account and password</h2>
+							<div class="row">
+								<h2>Let's survive</h2>
+								<form class="form-inline" id="fh5co-header-subscribe">
+									<div class="col-md-12 col-md-offset-0">
+										<div class="form-group">
+										<input type="text" class="form-control" id="name" placeholder="Here your account">
+											
+											<input type="password" class="form-control" id="password" placeholder="Here your password">
+											<div>
+												<button type="submit" class="btn btn-primary" id="btn">LOG IN</button>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+    
+	<!-- jQuery -->
+	<script src="javascripts/js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="javascripts/js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="javascripts/js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="javascripts/js/jquery.waypoints.min.js"></script>
 
-    <form>
-        Please Type the information below:
-        <br>
-        <input type='text' id='name' placeholder="name">
-        <br>
-        <input type='text' id='password' placeholder="password">
-        
-        <br>
-        <button id="btn">Click me</button>
-    </form>
+	<!-- Stellar -->
+	<script src="javascripts/js/jquery.stellar.min.js"></script>
 
+	<!-- Count Down -->
+	<script src="javascripts/js/simplyCountdown.js"></script>
+	<!-- Main -->
+	<script src="javascripts/js/main.js"></script>
 
+	<script>
+    $("#btn").click(function(event) {
 
+              var data = {
+                  name: $("#name").val(),
+                  password: $("#password").val(),
+              }
 
+              event.preventDefault();
+              $.ajax({
+                  type: "get",
+                  url: "RequestToCQ",
+                  datatype: "JSON",
+                  data: data,
+                  success: function(res){
+                     //console.log('wr');
+                      console.log(res);
+                     if(res.msg=="ok")
+                     {
+                      window.location='./game';
+                       console.log('hi')
+                     }
+                     else
+                     {
+                     window.location='./game1';
+                 }
+                  }
+              })
+          });
+</script>
 
+	</body>
+</html>
 
-    <script>
-        $("#btn").click(function(event) {
-
-            var data = {
-                name: $("#name").val(),
-                password: $("#password").val(),
-            }
-
-            event.preventDefault();
-            $.ajax({
-                type: "get",
-                url: "RequestToCQ",
-                datatype: "JSON",
-                data: data,
-                success: function(req,res){
-                    console.log('wr');
-                    console.log(res);
-                    window.location="/game";
-                }
-            })
-        });
-    </script>
-
-</body>

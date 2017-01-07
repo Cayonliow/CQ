@@ -243,4 +243,4 @@ if(param.key==40){
 	else{}
 }
 
-	
+// vi:et:ft=javascript

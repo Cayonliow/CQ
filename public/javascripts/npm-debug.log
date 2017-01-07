@@ -23,7 +23,7 @@
 14 verbose stack     at maybeClose (internal/child_process.js:852:16)
 14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:215:5)
 15 verbose pkgid myapp@0.0.0
-16 verbose cwd /home/wp2016/user/CLCL/git/myapp/views
+16 verbose cwd /home/wp2016/user/CLCL/git/myapp/public/javascripts
 17 error Linux 4.2.0-27-generic
 18 error argv "/usr/bin/nodejs" "/usr/bin/npm" "start"
 19 error node v6.2.2
