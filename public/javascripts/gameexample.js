@@ -1,37 +1,42 @@
 
+ 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'gameexample', { preload: preload, create: create, update: update, render: render });
+  function preload() {
+~     game.load.image('background','images/assets/grass.png');
 
-function preload() {
-    game.load.image('background','images/assets/back.png');
+      game.load.image('poison','images/assets/poison.png');
+      game.load.image('bread','images/assets/bread.png');
+      game.load.image('meat','images/assets/meat.png');
+      game.load.image('iron','images/assets/iron.png');
+      game.load.image('diamond','images/assets/diamond.png');
+      game.load.image('mushroom','images/assets/mushroom.png');
+      game.load.image('fire','images/assets/fire.png');
+      game.load.image('water','images/assets/water.png');
+      game.load.image('alien','images/assets/alien.png');
+      game.load.image('mag','images/assets/mag.png');
+      //game.load.image('monster','assets/red.png');
 
-    game.load.image('poison','images/assets/poison.png');
-    game.load.image('bread','images/assets/bread.png');
-    game.load.image('meat','images/assets/meat.png');
-    game.load.image('iron','images/assets/iron.png');
-    game.load.image('diamond','images/assets/diamond.png');
-    game.load.image('mushroom','images/assets/mushroom.png');
-    game.load.image('fire','images/assets/fire.png');
-    game.load.image('water','images/assets/water.png');
-    game.load.image('alien','images/assets/alien.png');
-    game.load.image('mag','images/assets/mag.png');
-    //game.load.image('monster','assets/red.png');
+      game.load.image('ground', 'images/assets/ground.png');
 
-    game.load.image('ground', 'images/assets/ground.png');
-    
-    game.load.image('tree1','images/assets/tree1.png');
-    game.load.image('tbread','images/assets/bread_tree.png');
-    game.load.image('tmeat','images/assets/meat_tree.png');
-    game.load.image('jewel','images/assets/jewel_tree.png');
-    game.load.image('metal','images/assets/iron_tree.png');
-    game.load.image('fossil','images/assets/magnet_tree.png');
-    
-    game.load.spritesheet('player','images/assets/player.png',60,60);
-	
-    game.load.audio('bgm', 'images/assets/forest.mp3');
-    game.load.audio('sfx', 'images/assets/Chopping_log.mp3');
-}
+      game.load.image('tree1','images/assets/tree1.png');
+      game.load.image('tbread','images/assets/bread_tree.png');
+      game.load.image('tmeat','images/assets/meat_tree.png');
+      game.load.image('jewel','images/assets/jewel_tree.png');
+      game.load.image('metal','images/assets/iron_tree.png');
+      game.load.image('fossil','images/assets/magnet_tree.png');
 
-//var fx;
+      game.load.spritesheet('player','images/assets/player.png',60,60);
+
+      game.load.audio('bgm', 'images/assets/forest.mp3');
+      game.load.audio('sfx', 'images/assets/Chopping_log.mp3');
++
++     game.load.audio('lv_up', 'images/assets/lv_up.mp3');
++     game.load.audio('select', 'images/assets/select.wav');
+  }
+
+  var fx;
+var fx2;
+var fx3;
 
 var player;
 var cursors;
@@ -41,17 +46,26 @@ var hunger_max = 80;
 var temp=37;
 var exp=0;
 var lv=1;
+
+var tired = 0.075;
+var cold = 0.05;
+
+var trees_chop = 0;
+var score = 0;
+
 var t1;
 var t2;
 var t3;
 var t4;
 var t5;
+var t6;
 
-var speed=100;
+var speed=75;
 var speedtemp=100;
 var speedup=0;
 var speeddown=0;
 var attack=1;
+var atk_upgrade = 0;
 var attackup=0;
 var attackdown=0;
 var hungerdown=0;//hunger decrease by time
@@ -74,6 +88,12 @@ var hp4=85;
 var hp5=75;
 var hp6=95;
 
+// item upgrade
+var bread = 0;
+var meat = 0;
+var iron = 0;
+var water = 0;
+var mushroom = 0;
 
 
 function create() {
@@ -81,9 +101,9 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
     
 
-    game.add.tileSprite(0, 0, 1920, 1920, 'background');
+    game.add.tileSprite(0, 0, 4800, 4800, 'background');
 
-    game.world.setBounds(0, 0, 1920, 1920);
+    game.world.setBounds(0, 0, 4800, 4800);
 	
 	upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
 	downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
@@ -93,50 +113,55 @@ function create() {
 	
     // bgm
     this.backgroundMusic = this.game.add.audio('bgm');
-    this.backgroundMusic.volume = 0.3;
+    this.backgroundMusic.volume = 1;
     this.backgroundMusic.loop = true;
     this.backgroundMusic.play();
     
     //sound effect
     fx = game.add.audio('sfx');
+    fx2 = game.add.audio('lv_up');
+    fx3 = game.add.audio('select');
+    fx4 = game.add.audio('walk');
+    fx2.volume = 0.3;
+    fx3.volume = 0.3;
     
     //Create tree
     trees1 = game.add.group();  //mushroom
     trees1.enableBody = true;
-    for (var i = 0; i < 200; i++)
+    for (var i = 0; i < 1500; i++)
     {
-        var tree1 = trees1.create(Math.random()*1900, Math.random()*1900, 'tree1', game.rnd.integerInRange(99,100));
+        var tree1 = trees1.create(Math.random()*4750, Math.random()*4750, 'tree1', game.rnd.integerInRange(99,100));
         tree1.body.immovable = true;
     }
     trees2 = game.add.group();  // meat
     trees2.enableBody = true;
-    for (i=0;i < 200; i++){
-        var tree2 = trees2.create(Math.random()*1900, Math.random()*1900, 'tree1', game.rnd.integerInRange(99,100));
+    for (i=0;i < 1500; i++){
+        var tree2 = trees2.create(Math.random()*4750, Math.random()*4750, 'tree1', game.rnd.integerInRange(99,100));
         tree2.body.immovable = true;
     }
     trees3 = game.add.group();  // bread
     trees3.enableBody = true;
-    for (i = 0; i < 200; i++){
-		var tree3 = trees3.create(Math.random()*1900, Math.random()*1900, 'tree1', game.rnd.integerInRange(99,100));
+    for (i = 0; i < 1500; i++){
+		var tree3 = trees3.create(Math.random()*4750, Math.random()*4750, 'tree1', game.rnd.integerInRange(99,100));
         tree3.body.immovable = true;
 	}
     trees4 = game.add.group();  // metal
     trees4.enableBody = true;
-    for (i = 0; i < 200; i++)
+    for (i = 0; i < 1500; i++)
     {
-        var tree4 = trees4.create(Math.random()*1900, Math.random()*1900, 'tree1', game.rnd.integerInRange(99,100));
+        var tree4 = trees4.create(Math.random()*4750, Math.random()*4750, 'tree1', game.rnd.integerInRange(99,100));
         tree4.body.immovable = true;
     }	
     trees5 = game.add.group();  // magnet
     trees5.enableBody = true;
-	for (i = 0; i < 200; i++){
-        var tree5 = trees5.create(Math.random()*1900, Math.random()*1900, 'tree1', game.rnd.integerInRange(99,100));
+	for (i = 0; i < 1500; i++){
+        var tree5 = trees5.create(Math.random()*4750, Math.random()*4750, 'tree1', game.rnd.integerInRange(99,100));
         tree5.body.immovable = true;
     }
     trees6 = game.add.group();  // jewel
     trees6.enableBody = true;
-    for (i = 0; i < 200; i++){
-        var tree6 = trees6.create(Math.random()*1900, Math.random()*1900, 'tree1', game.rnd.integerInRange(99,100));
+    for (i = 0; i < 1500; i++){
+        var tree6 = trees6.create(Math.random()*4750, Math.random()*4750, 'tree1', game.rnd.integerInRange(99,100));
         tree6.body.immovable = true;
     }	
 	
@@ -172,22 +197,25 @@ function create() {
 
 
 
-    t1=game.add.text(32, 32, "hunger="+hunger+" / "+hunger_max, { font: "20px Arial", fill: "#f26c4f", align: "left" });
+    t1=game.add.text(32, 32, "hunger="+hunger+" / "+hunger_max, { font: "20px Arial", fill: "#ffffff", align: "left" });
     t1.fixedToCamera = true;
     t1.cameraOffset.setTo(25, 250);
-    t2=game.add.text(32, 32, "temp="+temp, { font: "20px Arial", fill: "#f26c4f", align: "left" });
+    t2=game.add.text(32, 32, "temp="+temp, { font: "20px Arial", fill: "#ffffff", align: "left" });
     t2.fixedToCamera = true;
     t2.cameraOffset.setTo(25, 270);
-    t3=game.add.text(32, 32, "attack="+attack, { font: "20px Arial", fill: "#f26c4f", align: "left" });
+    t3=game.add.text(32, 32, "attack="+attack, { font: "20px Arial", fill: "#ffffff", align: "left" });
     t3.fixedToCamera = true;
     t3.cameraOffset.setTo(25, 290);
-    t4=game.add.text(32, 32, "exp="+exp+" / "+(lv*10), { font: "20px Arial", fill: "#f26c4f", align: "left" });
+    t4=game.add.text(32, 32, "exp="+exp+" / "+(lv*10), { font: "20px Arial", fill: "#ffffff", align: "left" });
     t4.fixedToCamera = true;
     t4.cameraOffset.setTo(25, 310);
-    t5=game.add.text(32, 32, "level="+lv, { font: "20px Arial", fill: "#f26c4f", align: "left" });
+    t5=game.add.text(32, 32, "level="+lv, { font: "20px Arial", fill: "#ffffff", align: "left" });
     t5.fixedToCamera = true;
     t5.cameraOffset.setTo(25, 330);
-
+    t6=game.add.text(32, 32, "", { font: "150px Arial", fill: "#ffffff", align: "left" });
+    t6.fixedToCamera = true;
+    t6.cameraOffset.setTo(115, 55);
+    
 
 
     //Item create
@@ -235,45 +263,45 @@ function create() {
 
     //Item info text
 
-    info1=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info1=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info1.fixedToCamera = true;
     info1.cameraOffset.setTo(135, 555);
 
-    info2=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info2=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info2.fixedToCamera = true;
     info2.cameraOffset.setTo(195, 555);
 
-    info3=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info3=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info3.fixedToCamera = true;
     info3.cameraOffset.setTo(255, 555);
 
-    info4=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info4=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info4.fixedToCamera = true;
     info4.cameraOffset.setTo(315, 555);
 
-    info5=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info5=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info5.fixedToCamera = true;
     info5.cameraOffset.setTo(375, 555);
 
-    info6=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info6=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info6.fixedToCamera = true;
     info6.cameraOffset.setTo(435, 555);
 
-    info7=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info7=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info7.fixedToCamera = true;
     info7.cameraOffset.setTo(495, 555);
 
-    info8=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info8=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info8.fixedToCamera = true;
-    info8.cameraOffset.setTo(555, 555);
+    info8.cameraOffset.setTo(555, 555); 
 
-    info9=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info9=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info9.fixedToCamera = true;
     info9.cameraOffset.setTo(615, 555);
 
-    info10=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#f26c4f", align: "left" });
+    info10=game.add.text(32, 32, "0", { font: "15px Arial", fill: "#ffffff", align: "left" });
     info10.fixedToCamera = true;
-    info10.cameraOffset.setTo(675, 555);
+    info10.cameraOffset.setTo(665, 555);
  
 
     cursors = game.input.keyboard.createCursorKeys();
@@ -320,9 +348,10 @@ function update() {
 	
     if (upKey.isDown)
     {
-        hunger-=0.01;
+        //fx4.play();
+        hunger-= tired;
         t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
-	temp+=0.01;
+	    temp+= cold;
         t2.setText("temp="+parseInt(temp)); 
 
         if (leftKey.isDown)
@@ -372,9 +401,10 @@ function update() {
     }
     else if (downKey.isDown)
     {
-        hunger-=0.01;
+        //fx4.play();
+        hunger-= tired;
         t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
-	temp+=0.01;
+	temp+= cold;
         t2.setText("temp="+parseInt(temp)); 
         if (leftKey.isDown)
         {
@@ -423,9 +453,10 @@ function update() {
 
     else if (leftKey.isDown)
     {
-        hunger-=0.01;
+        //fx4.play();
+        hunger-= tired;
         t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
-	temp+=0.01;
+	temp+= cold;
         t2.setText("temp="+parseInt(temp)); 
 
         if (spaceKey.isDown)
@@ -441,9 +472,10 @@ function update() {
     }
     else if (rightKey.isDown)
     {
-	hunger-=0.01;
+        //fx4.play();
+	hunger-= tired;
         t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
-	temp+=0.01;
+	temp+= cold;
         t2.setText("temp="+parseInt(temp)); 
 
         if (spaceKey.isDown)
@@ -462,7 +494,7 @@ function update() {
         //  Stand still
 	hunger-=0.005;
         t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max); 
-	temp-=0.01;
+	temp-= cold;
         t2.setText("temp="+parseInt(temp)); 
 
         if (spaceKey.isDown)
@@ -495,13 +527,13 @@ function updateCounter(){
       hunger-=1;
       t1.setText("hunger="+hunger+" / "+hunger_max);
    }
-   if(hungerup==1)
+   if(hungerup!=0)
    {
-      hunger+=1;
+      hunger+=hungerup;
       t1.setText("hunger="+hunger+" / "+hunger_max);
    }
-   if(tempup==1.5){
-       temp+=1.5;
+   if(tempup!=0){
+       temp+=tempup;
        t2.setText("temp="+temp);
    }
    t3.setText("attack="+attack);
@@ -525,10 +557,13 @@ var num10=0;
 //bread
 function actionOnClick1(){
 	if(num1>0){
-		hunger+=10;
+        fx3.play();
+        
+		hunger+= (15+bread);
 		t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
         temp+=1 ;
 		t2.setText("temp="+temp);
+        tired-= 0.0001;
 		num1--;
 		info1.setText(num1);
 	}
@@ -536,25 +571,35 @@ function actionOnClick1(){
 //meat
 function actionOnClick2() {
 	if(num2>0){
-		hunger+=5;
+        fx3.play();
+        
+		hunger+= (10+meat);
 		t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
-        temp+=3 ;
+        temp+=5;
         t2.setText("temp="+temp);
 		attackup+=1;
 		attackup_time=counter+6;
 		t3.setText("attack="+parseInt(attack));
+        tired-= 0.0001;
+        
 		num2--;
-		info2.setText(num2);
+		info2.setText(num2);        
 	}
 }
 //mushroom
 function actionOnClick3() {
 	if(num3>0){
-        temp+=5 ;
+        fx3.play();
+        
+        hungerup=mushroom;
+		hungerup_time=counter+2;
+        
+        temp+=5;
         t2.setText("temp="+temp);
 		speedup+=80;
-		speedup_time=counter+15;
-	
+		speedup_time=counter+12;
+	    tired-= 0.0001;
+        
 		num3--;
 		info3.setText(num3);
 	}
@@ -562,10 +607,13 @@ function actionOnClick3() {
 //fire_gem
 function actionOnClick4() {
 	if(num4>0){
-		tempup+=1.5;
+        fx3.play();
+        
+		tempup+=2;
         tempup_time=counter+10;
-        speedup+=20;
+        speedup+=60;
 		speedup_time=counter+30;
+        cold-= 0.0001;
 	
 		num4--;
 		info4.setText(num4);
@@ -574,11 +622,15 @@ function actionOnClick4() {
 //iron_ore
 function actionOnClick5() {
 	if(num5>0){
+        fx3.play();
+        
 		speeddown+=150;
-		speeddown_time=counter+15;
+		speeddown_time=counter+20;
 	
-		hunger+=20;
+		hunger+= (25+iron);
 		t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
+        cold-= 0.00005;
+        tired-= 0.00005;
 	
 		num5--;
 		info5.setText(num5);
@@ -587,8 +639,10 @@ function actionOnClick5() {
 //diamond
 function actionOnClick6() {
 	if(num6>0){
-		attackup+=2;
-		attackup_time=counter+8;
+        fx3.play();
+        
+		attackup+=1.5;
+		attackup_time=counter+10;
 		t3.setText("attack="+parseInt(attack));
 
 		num6--;
@@ -598,11 +652,16 @@ function actionOnClick6() {
 //water_gem
 function actionOnClick7() {
 	if(num7>0){
+        fx3.play();
+
 		temp-=15;
 
 		t2.setText("temp="+parseInt(temp));
-		hunger+=25;
+		hunger+= (25+water);
 		t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);
+        
+        cold-= 0.00005;
+        tired-= 0.00005;
 
 		num7--;
 		info7.setText(num7);
@@ -611,7 +670,9 @@ function actionOnClick7() {
 //poison_dirt 
 function actionOnClick8() {
 	if(num8>0){
-		attackup+=5;
+        fx3.play();
+        
+		attackup+=3;
 		attackup_time=counter+10;
 		t3.setText("attack="+parseInt(attack));
 		hungerdown=1;
@@ -624,6 +685,8 @@ function actionOnClick8() {
 //alien_alloy
 function actionOnClick9() {
 	if(num9>0){
+        fx3.play();
+        
 		attackdown+=attack;
 		attackdown_time=counter+20;
 		t3.setText("attack="+parseInt(attack));
@@ -633,11 +696,14 @@ function actionOnClick9() {
 	
 		temp-=10;	
 		t2.setText("temp="+parseInt(temp));
-		hunger-=30;
+		hunger-=35;
 		t1.setText("hunger="+parseInt(hunger)+" / "+hunger_max);    
         
-        hungerup=1;
-		hungerup_time=counter+40;
+        hungerup=4;
+		hungerup_time=counter+20;
+        
+        tired-= 0.002;
+        cold-= 0.002;
 	
 		num9--;
 		info9.setText(num9);
@@ -670,6 +736,9 @@ function actionOnClick10() {
         
         speeddown+=100;
 		speeddown_time=counter+30;
+        
+        cold-= 0.001;
+        tired-= 0.001;
 	}
 }
 
@@ -681,8 +750,9 @@ function chopTree1(player,tree1) {
     if (spaceKey.isDown)
     {
         fx.play();
+        
         hp1-=attack;
-        hunger-=0.075;
+        hunger-= (tired/2);
         t1.setText("hunger="+hunger+" / "+hunger_max);    
     }
     if(hp1>0)
@@ -692,17 +762,22 @@ function chopTree1(player,tree1) {
     {
         tree1.kill();
         hp1=50;
-        if(game.rnd.integerInRange(1,10) <= 5){  // mushroom
+        
+        if(game.rnd.integerInRange(1,100) == 1){ // magnet
+            num10++;
+            info10.setText(num10);
+        }
+        if(game.rnd.integerInRange(1,12) == 1){  // mushroom
             num3++;
             info3.setText(num3);     
         }
         
-        if(game.rnd.integerInRange(1,12) == 1){ //bread
+        if(game.rnd.integerInRange(1,15) == 1){ //bread
             num1++;
             info1.setText(num1);        
         }
         
-        if(game.rnd.integerInRange(1,12) == 1){ // meat
+        if(game.rnd.integerInRange(1,13) == 1){ // meat
             num2++;
             info2.setText(num2);
         }
@@ -717,14 +792,19 @@ function chopTree2(player,tree2) {
     {
         fx.play();
         hp2-=attack;
-        hunger-=0.075;
+        hunger-= (tired/2);
         t1.setText("hunger="+hunger+" / "+hunger_max);    
     }
     if(hp2>0){}
     else{
         tree2.kill();
         hp2=70;
-        if(game.rnd.integerInRange(1,10) <= 4){ // meat
+        
+        if(game.rnd.integerInRange(1,100) == 1){ // magnet
+            num10++;
+            info10.setText(num10);
+        }
+        if(game.rnd.integerInRange(1,8) == 1){ // meat
             num2++;
             info2.setText(num2);
         }
@@ -737,7 +817,7 @@ function chopTree3(player,tree3) {
     {
         fx.play();
         hp3-=attack;
-        hunger-=0.075;
+        hunger-= (tired/2);
         t1.setText("hunger="+hunger+" / "+hunger_max);    
     }
     if(hp3>0){}
@@ -745,7 +825,11 @@ function chopTree3(player,tree3) {
         tree3.kill();
         hp3=60;
         
-        if(game.rnd.integerInRange(1,10) <= 4){ //bread
+        if(game.rnd.integerInRange(1,100) == 1){ // magnet
+            num10++;
+            info10.setText(num10);
+        }
+        if(game.rnd.integerInRange(1,8) == 1){ //bread
             num1++;
             info1.setText(num1);        
         }
@@ -759,7 +843,7 @@ function chopTree4(player,tree4) {
     {
         fx.play();
         hp4-=attack;
-        hunger-=0.075;
+        hunger-= (tired/2);
         t1.setText("hunger="+hunger+" / "+hunger_max);    
     }
     if(hp4>0){}
@@ -767,12 +851,16 @@ function chopTree4(player,tree4) {
         tree4.kill();
         hp4=85;
         
-        if(game.rnd.integerInRange(1,10) <= 2){// iron ore
+        if(game.rnd.integerInRange(1,100) == 1){ // magnet
+            num10++;
+            info10.setText(num10);
+        }
+        if(game.rnd.integerInRange(1,6) == 1){// iron ore
             num5++;
             info5.setText(num5);
         }
         
-        if(game.rnd.integerInRange(1,16) <= 2){// alien alloy
+        if(game.rnd.integerInRange(1,8) == 1){// alien alloy
             num9++;
             info9.setText(num9);
         }
@@ -786,7 +874,7 @@ function chopTree5(player,tree5) {
     {
         fx.play();
         hp5-=attack;
-        hunger-=0.075;
+        hunger-= (tired/2);
         t1.setText("hunger="+hunger+" / "+hunger_max);    
     }
     if(hp5>0){}
@@ -794,12 +882,12 @@ function chopTree5(player,tree5) {
         tree5.kill();
         hp5=75;
         
-        if(game.rnd.integerInRange(1,16) == 1){ // magnet
+        if(game.rnd.integerInRange(1,100) == 1){ // magnet
             num10++;
             info10.setText(num10);
         }
         
-        if(game.rnd.integerInRange(1,15) <= 2){ // poison dirt
+        if(game.rnd.integerInRange(1,12) == 1){ // poison dirt
             num8++;
             info8.setText(num8);
         }
@@ -813,7 +901,7 @@ function chopTree6(player,tree6) {
     {
         fx.play();
         hp6-=attack;
-        hunger-=0.075;
+        hunger-= (tired/2);
         t1.setText("hunger="+hunger+" / "+hunger_max);    
     }
     if(hp6>0){}
@@ -821,17 +909,21 @@ function chopTree6(player,tree6) {
         tree6.kill();
         hp6=95;
         
-        if(game.rnd.integerInRange(1,10) <= 4){ // fire gem
+        if(game.rnd.integerInRange(1,100) == 1){ // magnet
+            num10++;
+            info10.setText(num10);
+        }
+        if(game.rnd.integerInRange(1,5) <= 1){ // fire gem
             num4++;
             info4.setText(num4);
         }
         
-        if(game.rnd.integerInRange(1,12) <= 2){ // diamond
+        if(game.rnd.integerInRange(1,12) == 1){ // diamond
             num6++;
             info6.setText(num6);
         }
         
-        if(game.rnd.integerInRange(1,14) <= 2){ // water gem
+        if(game.rnd.integerInRange(1,7) == 1){ // water gem
             num7++;
             info7.setText(num7);
         }
@@ -872,7 +964,7 @@ function check()
     }
 
     speed=speedtemp+speedup-speeddown;
-    attack= 1 + ((lv-1)*0.02) +attackup-attackdown;
+    attack= 1 + atk_upgrade*0.5 + attackup-attackdown;
 
     //limit
     if(speed<=0)
@@ -887,6 +979,7 @@ function check()
     {
         hunger=0;
         player.kill();
+        t6.setText("   YOU \n   ARE \n  DEAD");
     }
     if(hunger>=hunger_max){
         hunger = hunger_max;
@@ -902,6 +995,8 @@ function check()
 
     if(exp >= lv*10)
     {
+        fx2.play();
+        
         exp = exp - lv*10;
         lv = lv+1;
         t5.setText("level="+lv);    
@@ -910,11 +1005,33 @@ function check()
   
         speed += 5;
         hunger_max = hunger_max + lv*3 + 5;
-        hunger = hunger + lv*3 + 5;
         t1.setText("hunger="+hunger+" / "+hunger_max);  
         
-        attack = attack + ((lv-1)*0.02);
-        t3.setText("attack="+attack); 
+        attackup+=1;
+		attackup_time=counter+10;
+        hungerup = 5+(lv*3);
+        hungerup_time = counter+ 3;
+        tired = tired *1.01;
+        cold = cold *1.01;
+        
+        bread = (lv-1)*2;
+        meat = lv-1;
+        iron = (lv-1)*2;
+        water = (lv-1)*2;
+        mushroom = lv-1;
+        
+        hp1=hp1*1.01;
+        hp2=hp2*1.01;
+        hp3=hp3*1.01;
+        hp4=hp4*1.01;
+        hp5=hp5*1.01;
+        hp6=hp6*1.01;
+        
+        if(lv%5 == 0){
+            atk_upgrade += 1;
+            attack += atk_upgrade*0.5;
+            t3.setText("attack="+parseInt(attack));
+        }
     }
 
 
